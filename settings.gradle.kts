@@ -22,6 +22,6 @@ pluginManagement {
 //
 
 
-rootProject.name = "gradle-learning"
+rootProject.name = "vetr-dsl"
 include("app")
 include("lib")

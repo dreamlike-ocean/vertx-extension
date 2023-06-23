@@ -9,10 +9,12 @@
 version = "1.0"
 group = "top.dreamlike"
 
+
+
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.8.22"
-
+    kotlin("jvm") version "1.8.22"
+    kotlin("plugin.serialization") version "1.8.22"
     // Apply the application plugin to add support for building a CLI application in Java.
     application
     java
@@ -38,6 +40,22 @@ dependencies {
     implementation("io.vertx:vertx-web:$vertx_version")
     // https://mvnrepository.com/artifact/io.vertx/vertx-lang-kotlin-coroutines
     implementation("io.vertx:vertx-lang-kotlin-coroutines:$vertx_version")
+
+// https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+    implementation("com.zaxxer:HikariCP:5.0.1")
+//// https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.0")
+//     https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
+//    implementation("com.mysql:mysql-connector-j:8.0.33")
+
+// https://mvnrepository.com/artifact/org.mybatis/mybatis
+    implementation("org.mybatis:mybatis:3.5.13")
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-kotlin
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
 
 //    api(project(":lib"))
@@ -66,7 +84,7 @@ tasks.jar {
     }
     from({
         configurations.runtimeClasspath.get()
-            .filter { it.name.endsWith("jar") }.map { zipTree(it) }
+                .filter { it.name.endsWith("jar") }.map { zipTree(it) }
     })
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
