@@ -18,7 +18,7 @@ class DBScope(val context: Context) {
         once: Boolean = true,
         autoCommit: Boolean = true,
         crossinline handle:T.() -> V
-    ): Pair<SqlSession, V> {
+    ): V {
         val sqlSession = currentSession() ?: GLOBAL_FACTORY.openSession(autoCommit)
         Vertx.currentContext().putLocal(SQL_SESSION_KEY, sqlSession)
         val future = StartOnCurrentContext(context) {
@@ -32,7 +32,7 @@ class DBScope(val context: Context) {
             }
         }
 
-        return sqlSession to future.await()
+        return future.await()
     }
 
 

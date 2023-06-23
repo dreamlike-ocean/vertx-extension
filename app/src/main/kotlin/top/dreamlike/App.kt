@@ -44,7 +44,7 @@ class TestVerticle : AbstractVerticle() {
                         this.findAll()
                     }
                 }
-                res.second
+
             }
 
         }
