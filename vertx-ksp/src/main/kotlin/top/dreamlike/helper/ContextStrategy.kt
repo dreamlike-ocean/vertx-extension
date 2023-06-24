@@ -4,24 +4,27 @@ import io.vertx.core.Context
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
+import io.vertx.ext.web.RoutingContext
 import top.dreamlike.Arg
+import top.dreamlike.model.FunctionParameterData
 
 
-private val vertxExtractor = Arg("vertx", "val vertx = it.vertx()")
+private val vertxExtractor = Arg("vertx", "val vertx = rc.vertx()")
 
-private val contextExtractor = Arg("context", "val context = it.vertx().orCreateContext")
+private val contextExtractor = Arg("context", "val context = rc.vertx().orCreateContext")
 
-private val requestExtractor =  Arg("request", "val request = it.request()")
+private val requestExtractor =  Arg("request", "val request = rc.request()")
 
-private val responseExtractor = Arg("response", "val response = it.response()")
+private val responseExtractor = Arg("response", "val response = rc.response()")
 
-private val routerContextExtractor = Arg("rc", "val rc = it")
+private val routerContextExtractor = Arg("rc", "")
 
-private val allContextObject =
+val allContextObject =
     mapOf(
         Vertx::class.qualifiedName!! to vertxExtractor, Context::class.qualifiedName!! to contextExtractor,
-        HttpServerRequest::class.qualifiedName!! to requestExtractor, HttpServerResponse::class.qualifiedName!! to responseExtractor
+        HttpServerRequest::class.qualifiedName!! to requestExtractor, HttpServerResponse::class.qualifiedName!! to responseExtractor,
+        RoutingContext::class.qualifiedName!! to requestExtractor
     )
 
 
-fun generateContext(qualifierName: String) = allContextObject[qualifierName]
+fun generateContextArg(parameterData: FunctionParameterData) = allContextObject[parameterData.typeQualifiedName]!!

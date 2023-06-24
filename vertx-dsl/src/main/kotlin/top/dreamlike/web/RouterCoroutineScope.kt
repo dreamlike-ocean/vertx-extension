@@ -7,11 +7,16 @@ import io.vertx.core.streams.ReadStream
 import io.vertx.ext.web.Route
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
+import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.net.http.HttpResponse.BodyHandlers
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class RouterCoroutineScope(val router: Router) {
 
@@ -44,6 +49,11 @@ class RouterCoroutineScope(val router: Router) {
 
     infix fun Route.bindTo(handle: suspend (RoutingContext) -> Unit) = co_handle_void(handle)
 
+    suspend fun RoutingContext.awaitBodyEnd() = suspendCoroutine { c ->
+        this.request().endHandler {
+            c.resume(Unit)
+        }
+    }
 
     private fun Route.co_handle_flow(handle: suspend (RoutingContext) -> ReadStream<Buffer>) {
         handler {

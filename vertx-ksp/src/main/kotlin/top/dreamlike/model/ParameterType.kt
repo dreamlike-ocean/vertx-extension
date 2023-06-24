@@ -9,5 +9,5 @@ package top.dreamlike.model
  * @FormParam
  */
 enum class ParameterType {
-    BODY,COOKIE,QUERY,PATH_PARAM,HEADER,MATRIX,FORM,CONTEXT
+    BODY, COOKIE, QUERY, PATH_PARAM, HEADER, MATRIX, FORM, CONTEXT
 }

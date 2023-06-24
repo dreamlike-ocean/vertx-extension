@@ -1,3 +1,3 @@
 package top.dreamlike
 
-data class Arg(val name:String, val assignStatement :String)
+data class Arg(val referenceName:String, val assignStatement :String)

@@ -7,7 +7,7 @@ import jakarta.ws.rs.Path
 import top.dreamlike.model.ClassData.Companion.parse
 import top.dreamlike.model.FunctionData.Companion.parse
 
-class VertxSymbolProcessor(val environment: SymbolProcessorEnvironment) : SymbolProcessor {
+class VertxJaxRsSymbolProcessor(val environment: SymbolProcessorEnvironment) : SymbolProcessor {
 
     companion object {
         val Object_Method = setOf("equals", "hashCode", "toString", "<init>")

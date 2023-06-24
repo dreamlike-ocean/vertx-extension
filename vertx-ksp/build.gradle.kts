@@ -26,6 +26,7 @@ dependencies {
     implementation("com.google.devtools.ksp:symbol-processing-api:1.8.22-1.0.11")
     api(libs.vertx.core)
     api(libs.vertx.web)
+    api(libs.vertx.coroutine)
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
