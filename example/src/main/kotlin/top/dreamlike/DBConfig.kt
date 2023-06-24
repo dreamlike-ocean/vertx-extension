@@ -1,23 +1,16 @@
-package top.dreamlike.db
-
+package top.dreamlike
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import io.vertx.core.Context
-import io.vertx.core.Future
-import io.vertx.core.Promise
-import io.vertx.core.Vertx
 import org.apache.ibatis.logging.stdout.StdOutImpl
 import org.apache.ibatis.mapping.Environment
 import org.apache.ibatis.session.Configuration
 import org.apache.ibatis.session.SqlSessionFactory
 import org.apache.ibatis.session.SqlSessionFactoryBuilder
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
-import top.dreamlike.Owner
-import top.dreamlike.helper.VirtualThreadUnsafe
-import java.util.concurrent.Executor
 import javax.sql.DataSource
 
+val GLOBAL_FACTORY = createFactory(createDataSource())
 
 private fun createFactory(dataSource: DataSource): SqlSessionFactory {
     val factory = JdbcTransactionFactory()
@@ -27,7 +20,7 @@ private fun createFactory(dataSource: DataSource): SqlSessionFactory {
     configuration.addMapper(Owner.OwnerMapper::class.java)
     configuration.setMapUnderscoreToCamelCase(true)
     return SqlSessionFactoryBuilder()
-            .build(configuration)
+        .build(configuration)
 }
 
 private fun createDataSource(): DataSource {
@@ -44,33 +37,3 @@ private fun createDataSource(): DataSource {
 
     return HikariDataSource(config)
 }
-
-val GLOBAL_FACTORY = createFactory(createDataSource())
-
-
-interface MybatisMarkInterface
-
-
-inline fun <reified T : MybatisMarkInterface> getMapper() = GLOBAL_FACTORY.openSession().getMapper(T::class.java)
-
-inline fun <T> StartOnCurrentContext(context: Context = Vertx.currentContext() ?: throw IllegalStateException("current context is null"),
-                                     crossinline supplier: () -> T): Future<T> {
-    val res = Promise.promise<T>()
-    VirtualThreadUnsafe.VIRTUAL_THREAD_BUILDER
-            .apply(Executor { r -> context.runOnContext { r.run() } })
-            .start {
-                try {
-                    val block_op_result = supplier()
-                    context.runOnContext {
-                        res.complete(block_op_result)
-                    }
-                } catch (e: Throwable) {
-                    context.runOnContext {
-                        res.fail(e)
-                    }
-                }
-            }
-
-    return res.future()
-}
-
