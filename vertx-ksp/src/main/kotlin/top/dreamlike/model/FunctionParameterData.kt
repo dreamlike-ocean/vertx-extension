@@ -2,6 +2,7 @@ package top.dreamlike.model
 
 
 import com.google.devtools.ksp.symbol.KSValueParameter
+import io.vertx.core.Vertx
 import jakarta.ws.rs.CookieParam
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.HeaderParam
@@ -9,6 +10,8 @@ import jakarta.ws.rs.MatrixParam
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
+import jakarta.ws.rs.core.GenericType
+import top.dreamlike.VertxJaxRsSymbolProcessor
 import top.dreamlike.helper.fetchValueString
 
 
@@ -16,17 +19,20 @@ data class FunctionParameterData(
     val typeQualifiedName: String,
     val key: String,
     val parameterType: ParameterType,
+    val genericTypes: List<String>,
     val ksValueParameter: KSValueParameter
 ) {
     //   val paramTypeList = it.parameters.map { a -> a.type.resolve().declaration.qualifiedName!!.asString() }
     companion object {
         fun KSValueParameter.parseFunctionParameter(): FunctionParameterData {
             val declaration = this.type.resolve().declaration
+            val genericTypes = this.type.element?.typeArguments?.filter { it.type != null } ?.map { it.type!!.resolve().declaration.qualifiedName!!.asString() }  ?: emptyList()
+            VertxJaxRsSymbolProcessor.logger.warn(":::::::::::$genericTypes")
 //            VertxSymbolProcessor.logger.warn("current parameter: ${this.name?.asString()}, type :${declaration.qualifiedName?.asString()}")
             val typeQualifiedName = declaration.qualifiedName!!.asString()
             var key = ""
             var parameterType: ParameterType = ParameterType.BODY
-            for (annotation in  this.annotations) {
+            for (annotation in this.annotations) {
                 val currentType = annotation.annotationType.resolve()
                 val currentAnnotationQualifiedName =
                     currentType.declaration.qualifiedName!!.asString()
@@ -68,7 +74,7 @@ data class FunctionParameterData(
                 }
 
             }
-            return FunctionParameterData(typeQualifiedName, key, parameterType, this)
+            return FunctionParameterData(typeQualifiedName, key, parameterType, genericTypes, this)
         }
 
     }

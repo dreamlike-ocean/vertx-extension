@@ -1,7 +1,10 @@
 package top.dreamlike
 
+import io.netty.channel.Channel
 import io.vertx.core.Vertx
+import io.vertx.core.http.Cookie
 import io.vertx.core.http.HttpServerRequest
+import jakarta.ws.rs.CookieParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.HeaderParam
 import jakarta.ws.rs.Path
@@ -12,17 +15,7 @@ import top.dreamlike.helper.ManualResponse
 class OwnerController {
     @Path("/test")
     @GET
-    fun test(s: String, @Context vertx: Vertx, @HeaderParam("header_verlue") headerP: String,@Context request: HttpServerRequest) {
+    fun test(@CookieParam("") cookies:Set<String>,c :String) {
 
     }
-
-    @Path("/test")
-    @GET
-    @ManualResponse
-    fun test1(@Context vertx: Vertx) = "123123"
-
-
-    @Path("/test")
-    @GET
-    fun test2(@Context vertx: Vertx) = "123123"
 }

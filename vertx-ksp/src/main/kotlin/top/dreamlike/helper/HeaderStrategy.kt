@@ -1,6 +1,7 @@
 package top.dreamlike.helper
 
 
+import io.vertx.core.http.Cookie
 import top.dreamlike.Arg
 import top.dreamlike.VertxJaxRsSymbolProcessor
 import top.dreamlike.model.FunctionParameterData
@@ -14,7 +15,7 @@ fun generateHeaderArg(functionParameterData: FunctionParameterData, index: Int):
         Long::class.qualifiedName, Long::class.java.name -> Arg(referenceName, """val $referenceName = rc.request().getHeader("${functionParameterData.key}").toLong()""")
         Double::class.qualifiedName, Double::class.java.name -> Arg(referenceName, """val $referenceName = rc.request().getHeader("${functionParameterData.key}").toDouble()""")
         Float::class.qualifiedName, Float::class.java.name -> Arg(referenceName, """val $referenceName = rc.request().getHeader("${functionParameterData.key}").toFloat()""")
-        BigDecimal::class.qualifiedName -> Arg(referenceName, """val $referenceName = BigDecimal(rc.request().getHeader("${functionParameterData.key}"))""")
+        BigDecimal::class.qualifiedName -> Arg(referenceName, """val $referenceName =  ${BigDecimal::class.qualifiedName}(rc.request().getHeader("${functionParameterData.key}"))""")
         String::class.java.name, String::class.qualifiedName -> Arg(referenceName, """val $referenceName = rc.request().getHeader("${functionParameterData.key}")""")
         else -> {
             VertxJaxRsSymbolProcessor.logger.error("${functionParameterData.typeQualifiedName} dont be supported!")

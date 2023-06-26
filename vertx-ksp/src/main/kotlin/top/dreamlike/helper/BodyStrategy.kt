@@ -1,6 +1,7 @@
 package top.dreamlike.helper
 
 import io.vertx.core.buffer.Buffer
+import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
 import top.dreamlike.Arg
 import top.dreamlike.model.FunctionParameterData
@@ -11,7 +12,7 @@ private val stringExtractor = Arg("str", "val str = buffer.toString()")
 
 private val jsonExtractor = Arg("jsonObject", "val jsonObject = buffer.toJsonObject()")
 
-private val objectExtractor = { qualifiedName :String -> Arg("object", "val object =  Json.decodeValue(buffer, $qualifiedName::class.java)") }
+private val objectExtractor = { qualifiedName :String -> Arg("object", "val object =  ${Json::class.qualifiedName} .decodeValue(buffer, $qualifiedName::class.java)") }
 
 
 fun generateBodyArg(functionParameterData: FunctionParameterData) = when(functionParameterData.typeQualifiedName) {

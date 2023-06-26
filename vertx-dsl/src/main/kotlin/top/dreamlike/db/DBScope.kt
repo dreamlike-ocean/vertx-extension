@@ -37,8 +37,5 @@ class DBScope(val context: Context,val factory: SqlSessionFactory) {
 
         return future.await()
     }
-
-
     fun currentSession(): SqlSession? = context.getLocal<SqlSession>(SQL_SESSION_KEY)
-
 }

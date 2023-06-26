@@ -23,7 +23,7 @@ val allContextObject =
     mapOf(
         Vertx::class.qualifiedName!! to vertxExtractor, Context::class.qualifiedName!! to contextExtractor,
         HttpServerRequest::class.qualifiedName!! to requestExtractor, HttpServerResponse::class.qualifiedName!! to responseExtractor,
-        RoutingContext::class.qualifiedName!! to requestExtractor
+        RoutingContext::class.qualifiedName!! to routerContextExtractor
     )
 
 

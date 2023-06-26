@@ -90,7 +90,7 @@ data class FunctionData(
         }
     }
 
-    inline fun autoHandleResponse() = returnType != null
+    inline fun manualResponse() = returnType == null
 
     /**
      * 必须包含Method or Path
@@ -161,12 +161,15 @@ data class FunctionData(
             when (it.parameterType) {
                 ParameterType.BODY -> TODO()
                 ParameterType.COOKIE -> TODO()
-                ParameterType.QUERY -> TODO()
-                ParameterType.PATH_PARAM -> TODO()
                 ParameterType.HEADER -> TODO()
                 ParameterType.MATRIX -> TODO()
                 ParameterType.FORM -> TODO()
                 ParameterType.CONTEXT -> TODO()
+
+
+                ParameterType.QUERY -> TODO()
+                ParameterType.PATH_PARAM -> TODO()
+
             }
         }
     }

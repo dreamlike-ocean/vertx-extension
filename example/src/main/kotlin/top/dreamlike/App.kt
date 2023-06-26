@@ -14,21 +14,21 @@ import top.dreamlike.web.RouterCoroutineScope.Companion.co_route
 class A(val a:Int)
 
 fun main() {
-//    val vertx = Vertx.vertx()
+    val vertx = Vertx.vertx()
+//
+//
 //    val kotlinModule = KotlinModule.Builder()
-//            .withReflectionCacheSize(512)
-//            .configure(KotlinFeature.NullToEmptyCollection, false)
-//            .configure(KotlinFeature.NullToEmptyMap, false)
-//            .configure(KotlinFeature.NullIsSameAsDefault, false)
-//            .configure(KotlinFeature.SingletonSupport, false)
-//            .configure(KotlinFeature.StrictNullChecks, false)
-//            .build()
+//        .withReflectionCacheSize(512)
+//        .configure(KotlinFeature.NullToEmptyCollection, false)
+//        .configure(KotlinFeature.NullToEmptyMap, false)
+//        .configure(KotlinFeature.NullIsSameAsDefault, false)
+//        .configure(KotlinFeature.SingletonSupport, false)
+//        .configure(KotlinFeature.StrictNullChecks, false)
+//        .build()
 //    DatabindCodec.mapper().registerModule(kotlinModule)
 //    DatabindCodec.prettyMapper().registerModule(kotlinModule)
-//    vertx.deployVerticle(TestVerticle())
-
-    println(String::class.qualifiedName!!)
-    println( String::class.java.name)
+    println(Set::class.qualifiedName!!)
+    println( Set::class.java.name)
 }
 
 
@@ -47,8 +47,8 @@ class TestVerticle : AbstractVerticle() {
                 res
             }
 
-            POST bindPath "/form" bindToHandle {
-                it.request().setExpectMultipart(true)
+            POST bindPath "/form" bindToHandle {rc ->
+                rc.request().setExpectMultipart(true)
 
             }
 
