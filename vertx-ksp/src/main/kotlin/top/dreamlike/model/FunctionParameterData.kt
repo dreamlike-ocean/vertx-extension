@@ -27,7 +27,6 @@ data class FunctionParameterData(
         fun KSValueParameter.parseFunctionParameter(): FunctionParameterData {
             val declaration = this.type.resolve().declaration
             val genericTypes = this.type.element?.typeArguments?.filter { it.type != null } ?.map { it.type!!.resolve().declaration.qualifiedName!!.asString() }  ?: emptyList()
-            VertxJaxRsSymbolProcessor.logger.warn(":::::::::::$genericTypes")
 //            VertxSymbolProcessor.logger.warn("current parameter: ${this.name?.asString()}, type :${declaration.qualifiedName?.asString()}")
             val typeQualifiedName = declaration.qualifiedName!!.asString()
             var key = ""

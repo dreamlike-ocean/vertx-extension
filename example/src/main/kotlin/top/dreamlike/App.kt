@@ -9,8 +9,14 @@ import io.vertx.core.json.Json
 import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.ext.web.Router
 import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.dispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 import top.dreamlike.db.DBScope.Companion.openDBScope
 import top.dreamlike.web.RouterCoroutineScope.Companion.co_route
+
+
 class A(val a:Int)
 
 fun main() {
@@ -59,6 +65,11 @@ class TestVerticle : AbstractVerticle() {
             .requestHandler(router)
             .listen(8080)
         println("listen  end")
+
+    }
+
+    fun s(ownerController: OwnerController) {
+        val router = Router.router(vertx)
     }
 }
 

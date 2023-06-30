@@ -1,15 +1,10 @@
 package top.dreamlike
 
-import io.vertx.core.json.Json
-import io.vertx.ext.web.Route
-import java.math.BigDecimal
-import kotlin.coroutines.resume
-
 
 class Template {
     companion object {
-        fun multipart(afterBody :String) = """
-         route.handler { rc-> 
+        fun multipartRoute(afterBody :String, routeRef:String = "route") = """
+         $routeRef.handler { rc-> 
             rc.request().setExpectMultipart(true)
             rc.request().endHandler {
                 $afterBody
@@ -17,22 +12,36 @@ class Template {
         }
         """.trimIndent()
 
-        fun body(afterBody :String) = """
-         route.handler { rc->
+        fun bodyRoute(afterBody :String, routeRef:String = "route") = """
+         $routeRef.handler { rc->
             rc.request().body().onSuccess { buffer -> 
                $afterBody
            }
         }
         """.trimIndent()
 
+        fun normalRoute(handle: String, routeRef:String = "route") = """
+         $routeRef.handler { rc->
+             $handle
+         }
+        """.trimIndent()
+
+        fun suspendScope(handle: String, vertxRef :String?) :String {
+            return """
+              kotlinx.coroutines.CoroutineScope(${vertxRef?:"it.vertx()"}.dispatcher() as kotlin.coroutines.CoroutineContext)
+                    .launch {
+                       $handle
+                     }
+        """.trimIndent()
+        }
+
+        val preImport = """
+            import io.vertx.kotlin.coroutines.dispatcher
+            import kotlinx.coroutines.CoroutineScope
+            import kotlinx.coroutines.launch
+            import kotlin.coroutines.CoroutineContext
+        """.trimIndent()
     }
 
-    fun s(route: Route) {
-        route.handler { rc->
-            rc.request().setExpectMultipart(true)
-            rc.request().endHandler {
-                var attribute = rc.request().getFormAttribute("")
-            }
-        }
-    }
+
 }

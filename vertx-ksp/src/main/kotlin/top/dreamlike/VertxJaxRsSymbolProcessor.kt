@@ -46,13 +46,14 @@ class VertxJaxRsSymbolProcessor(val environment: SymbolProcessorEnvironment) : S
         val classData = controller.parse()
         environment.logger.warn("parse res: $classData")
         val dependencies = Dependencies(false, controller.containingFile!!)
-        val functionInfo = controller.getAllFunctions()
+        val functionStatement = controller.getAllFunctions()
             .filter { !it.modifiers.contains(Modifier.PRIVATE) && !Object_Method.contains(it.qualifiedName!!.getShortName()) }
             .map {it.parse(classData)}
-            .forEach {
-                logger.warn("current function : ${it}")
+            .mapIndexed { index, it ->
+               it.generateRouteHandle(index)
             }
-
+        val res = functionStatement.joinToString("\n")
+        logger.warn(res)
     }
 
     /**

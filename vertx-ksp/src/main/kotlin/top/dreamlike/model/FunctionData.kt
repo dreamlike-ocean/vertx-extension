@@ -2,9 +2,6 @@ package top.dreamlike.model
 
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.Modifier
-import io.vertx.core.buffer.Buffer
-import io.vertx.core.http.HttpMethod
-import io.vertx.ext.web.Router
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
@@ -14,10 +11,9 @@ import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
+import top.dreamlike.Template
 import top.dreamlike.VertxJaxRsSymbolProcessor
-import top.dreamlike.helper.ManualResponse
-import top.dreamlike.helper.allContextObject
-import top.dreamlike.helper.legalPath
+import top.dreamlike.helper.*
 import top.dreamlike.model.FunctionParameterData.Companion.parseFunctionParameter
 
 data class FunctionData(
@@ -35,12 +31,12 @@ data class FunctionData(
 ) {
     companion object {
         val Method_Annotation = mapOf(
-            GET::class.java.name to "HttpMethod.GET",
-            POST::class.java.name to "HttpMethod.POST",
-            DELETE::class.java.name to "HttpMethod.DELETE",
-            PUT::class.java.name to "HttpMethod.PUT",
-            PATCH::class.java.name to "HttpMethod.PATCH",
-            OPTIONS::class.java.name to "HttpMethod.OPTIONS"
+            GET::class.java.name to "io.vertx.core.http.HttpMethod.GET",
+            POST::class.java.name to "io.vertx.core.http.HttpMethod.POST",
+            DELETE::class.java.name to "io.vertx.core.http.HttpMethod.DELETE",
+            PUT::class.java.name to "io.vertx.core.http.HttpMethod.PUT",
+            PATCH::class.java.name to "io.vertx.core.http.HttpMethod.PATCH",
+            OPTIONS::class.java.name to "io.vertx.core.http.HttpMethod.OPTIONS"
         )
 
         fun KSFunctionDeclaration.parse(ownerClass: ClassData): FunctionData {
@@ -136,53 +132,53 @@ data class FunctionData(
     }
 
 
-    fun generateRouteHandle(): String {
+    fun generateRouteHandle(index :Int): String {
         val path = ownerClass.rootPath.legalPath() + path.legalPath()
         val needParseBody = params.any { it.parameterType == ParameterType.BODY }
         val needForm = params.any { it.parameterType == ParameterType.FORM }
 
-        val statements = mutableListOf<String>()
+
         val routeStatement = when {
-            path.isBlank() && httpMethod == null -> "val route = router.route()"
-            httpMethod == null -> """val route = router.route("$path")"""
-            else -> """"val route = router.route($,"$path")""""
+            path.isBlank() && httpMethod == null -> "val route$index = router.route()"
+            httpMethod == null -> """ val route$index = router.route("$path") """
+            else -> """ val route$index = router.route($httpMethod,"$path") """
         }
 
-        statements += routeStatement
+        val functionCall = params.generateCurrenFunctionCall()
+        val bindHandleStatement = when {
+            needParseBody -> Template.bodyRoute(functionCall, "route$index")
+            needForm -> Template.multipartRoute(functionCall, "route$index")
+            else -> Template.normalRoute(functionCall, "route$index")
+        }
 
-
-
-        return ""
+        return "$routeStatement\n$bindHandleStatement"
     }
 
-    fun List<FunctionParameterData>.generate() {
-        val functionCallStatement = ownerClass.qualifiedName + "." + referenceName
-        this.map {
-            when (it.parameterType) {
-                ParameterType.BODY -> TODO()
-                ParameterType.COOKIE -> TODO()
-                ParameterType.HEADER -> TODO()
+    //这里是前序全部处理完毕 比如该惰性的都惰性了
+    // 来具体生成 从Route到T::function(...args)的代码
+    fun List<FunctionParameterData>.generateCurrenFunctionCall() : String {
+        var functionCallStatement = ownerClass.referenceName + "." + referenceName
+        val parseParamArgs = this.mapIndexed { index, param ->
+            when (param.parameterType) {
+                ParameterType.BODY -> generateBodyArg(param)
+                ParameterType.COOKIE -> generateCookieArg(param, index)
+                ParameterType.HEADER -> generateHeaderArg(param, index)
+                ParameterType.FORM -> generateFormArg(param, index)
+                ParameterType.CONTEXT -> generateContextArg(param)
+                ParameterType.QUERY -> generateQueryArg(param, index)
+                ParameterType.PATH_PARAM -> generatePathParamArg(param, index)
+                //todo 矩阵太复杂不实现 前序已经排除 这里抛出todo只是为了通过编译
                 ParameterType.MATRIX -> TODO()
-                ParameterType.FORM -> TODO()
-                ParameterType.CONTEXT -> TODO()
-
-
-                ParameterType.QUERY -> TODO()
-                ParameterType.PATH_PARAM -> TODO()
-
             }
         }
-    }
-
-
-    fun s(router: Router) {
-        val route = router.route()
-            .handler {
-
-                it.request().body().onSuccess {
-                }
-            }
-
+        val assignBlock = parseParamArgs.joinToString("\n") { it.assignStatement }
+        functionCallStatement = "$functionCallStatement(${parseParamArgs.joinToString(",") { it.referenceName }})"
+        functionCallStatement = if (modifier.contains(Modifier.SUSPEND)) {
+            Template.suspendScope(functionCallStatement, parseParamArgs.VertxRef())
+        } else {
+            functionCallStatement
+        }
+        return "$assignBlock\n$functionCallStatement"
     }
 
 }

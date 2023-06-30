@@ -21,6 +21,7 @@ import kotlin.coroutines.suspendCoroutine
 class RouterCoroutineScope(val router: Router) {
 
     companion object {
+
         fun Router.co_route(functions: RouterCoroutineScope.() -> Unit): Router {
             functions(RouterCoroutineScope(this))
             return this

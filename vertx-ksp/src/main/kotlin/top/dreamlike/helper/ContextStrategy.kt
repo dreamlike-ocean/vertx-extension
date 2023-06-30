@@ -8,8 +8,9 @@ import io.vertx.ext.web.RoutingContext
 import top.dreamlike.Arg
 import top.dreamlike.model.FunctionParameterData
 
+private const val vertxRef = "vertx"
 
-private val vertxExtractor = Arg("vertx", "val vertx = rc.vertx()")
+private val vertxExtractor = Arg(vertxRef, "val vertx = rc.vertx()")
 
 private val contextExtractor = Arg("context", "val context = rc.vertx().orCreateContext")
 
@@ -28,3 +29,7 @@ val allContextObject =
 
 
 fun generateContextArg(parameterData: FunctionParameterData) = allContextObject[parameterData.typeQualifiedName]!!
+
+fun List<Arg>.containVertx() = this.any { it.referenceName == vertxRef }
+
+fun List<Arg>.VertxRef() = this.find { it.referenceName == vertxRef }?.referenceName
