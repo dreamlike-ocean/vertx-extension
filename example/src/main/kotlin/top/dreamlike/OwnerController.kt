@@ -30,7 +30,7 @@ class OwnerController {
     @Path("/test")
     @GET
     @ManualResponse
-    fun test5(@CookieParam("cookie1") cookies: Set<Cookie>, c: String) {
+    suspend fun test5(@CookieParam("cookie1") cookies: Set<Cookie>, c: String) {
 
     }
 

@@ -31,7 +31,7 @@ class Template {
 
         fun suspendScope(handle: String, vertxRef: String?): String {
             return """
-              kotlinx.coroutines.CoroutineScope(${vertxRef ?: "it.vertx()"}.dispatcher() as kotlin.coroutines.CoroutineContext)
+              CoroutineScope(${vertxRef ?: "rc.vertx()"}.dispatcher() as CoroutineContext)
                     .launch {
                        $handle
                      }
