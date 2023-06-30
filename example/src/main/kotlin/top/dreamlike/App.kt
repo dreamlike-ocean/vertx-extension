@@ -12,6 +12,7 @@ import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import top.dreamlike.Binder.Companion.bindTo
 import kotlin.coroutines.CoroutineContext
 import top.dreamlike.db.DBScope.Companion.openDBScope
 import top.dreamlike.web.RouterCoroutineScope.Companion.co_route
@@ -33,8 +34,10 @@ fun main() {
 //        .build()
 //    DatabindCodec.mapper().registerModule(kotlinModule)
 //    DatabindCodec.prettyMapper().registerModule(kotlinModule)
-    println(Set::class.qualifiedName!!)
-    println( Set::class.java.name)
+    var router = Router.router(vertx)
+    var controller = OwnerController()
+    controller bindTo router
+
 }
 
 
@@ -70,6 +73,7 @@ class TestVerticle : AbstractVerticle() {
 
     fun s(ownerController: OwnerController) {
         val router = Router.router(vertx)
+
     }
 }
 

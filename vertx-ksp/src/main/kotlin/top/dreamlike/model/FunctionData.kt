@@ -23,8 +23,8 @@ data class FunctionData(
     val modifier: Set<Modifier>,
     val ownerClass: ClassData,
     val httpMethod: String?,
-    val consumer: Array<String>?,
-    val produces: Array<String>?,
+    val consumer: List<String>?,
+    val produces: List<String>?,
     val returnType: String?,
     val params: List<FunctionParameterData>,
     val functionDeclaration: KSFunctionDeclaration,
@@ -43,11 +43,11 @@ data class FunctionData(
             val modifier = modifiers
             var path: String? = null
             var httpMethod: String? = null
-            var consumer: Array<String>? = null
-            var produces: Array<String>? = null
+            var consumer: List<String>? = null
+            var produces: List<String>? = null
             val referenceName = this.simpleName.asString()
             val qualifiedName = this.qualifiedName!!.asString()
-            var resType :String? = this.returnType!!.resolve().declaration.qualifiedName!!.asString()
+            var resType: String? = this.returnType!!.resolve().declaration.qualifiedName!!.asString()
             for (annotation in this.annotations) {
                 val currentAnnotationQualifiedName =
                     annotation.annotationType.resolve().declaration.qualifiedName!!.asString()
@@ -59,10 +59,10 @@ data class FunctionData(
                         annotation.arguments.find { it.name!!.asString() == "value" }!!.value as String
 
                     Consumes::class.qualifiedName == currentAnnotationQualifiedName -> consumer =
-                        annotation.arguments.find { it.name!!.asString() == "value" }!!.value as Array<String>
+                        annotation.arguments.find { it.name!!.asString() == "value" }!!.value as List<String>
 
                     Produces::class.qualifiedName == currentAnnotationQualifiedName -> produces =
-                        annotation.arguments.find { it.name!!.asString() == "value" }!!.value as Array<String>
+                        annotation.arguments.find { it.name!!.asString() == "value" }!!.value as List<String>
 
                     ManualResponse::class.qualifiedName == currentAnnotationQualifiedName -> resType = null
                 }
@@ -93,13 +93,13 @@ data class FunctionData(
      * 不可以超过一个body参数 无标识则为body参数
      *
      */
-    fun allowGenerate() :Boolean {
+    fun allowGenerate(): Boolean {
         if (httpMethod == null && path == null) {
             VertxJaxRsSymbolProcessor.logger.error("$qualifiedName need http method or path!")
             return false
         }
 
-        if (params.any{it.parameterType == ParameterType.MATRIX}) {
+        if (params.any { it.parameterType == ParameterType.MATRIX }) {
             VertxJaxRsSymbolProcessor.logger.error("$qualifiedName has matrix param! current we dont support matrix param!")
             return false
         }
@@ -119,9 +119,9 @@ data class FunctionData(
             return false
         }
 
-       val hasIllegalContextParam = params
-           .filter { it.parameterType == ParameterType.CONTEXT }
-           .any { allContextObject[it.typeQualifiedName] == null }
+        val hasIllegalContextParam = params
+            .filter { it.parameterType == ParameterType.CONTEXT }
+            .any { allContextObject[it.typeQualifiedName] == null }
 
         if (hasIllegalContextParam) {
             VertxJaxRsSymbolProcessor.logger.error("$qualifiedName has illegal ContextParam! current we only support ${allContextObject.keys}!")
@@ -132,16 +132,28 @@ data class FunctionData(
     }
 
 
-    fun generateRouteHandle(index :Int): String {
+    fun generateRouteHandle(index: Int): String {
+        if (!allowGenerate()) {
+            throw IllegalStateException("current source dont support generate code")
+        }
         val path = ownerClass.rootPath.legalPath() + path.legalPath()
         val needParseBody = params.any { it.parameterType == ParameterType.BODY }
         val needForm = params.any { it.parameterType == ParameterType.FORM }
 
-
+        val statements = mutableListOf<String>()
+        val routeRef = "route$index"
         val routeStatement = when {
-            path.isBlank() && httpMethod == null -> "val route$index = router.route()"
-            httpMethod == null -> """ val route$index = router.route("$path") """
-            else -> """ val route$index = router.route($httpMethod,"$path") """
+            path.isBlank() && httpMethod == null -> "val $routeRef = router.route()"
+            httpMethod == null -> """ val $routeRef = router.route("$path") """
+            else -> """ val $routeRef = router.route($httpMethod,"$path") """
+        }
+        statements += routeStatement
+
+        consumer?.forEach {
+            statements += """$routeRef.consumes("$it")"""
+        }
+        produces?.forEach {
+            statements += """$routeRef.produces("$it")"""
         }
 
         val functionCall = params.generateCurrenFunctionCall()
@@ -150,13 +162,14 @@ data class FunctionData(
             needForm -> Template.multipartRoute(functionCall, "route$index")
             else -> Template.normalRoute(functionCall, "route$index")
         }
+        statements += bindHandleStatement
 
-        return "$routeStatement\n$bindHandleStatement"
+        return statements.joinToString("\n")
     }
 
     //这里是前序全部处理完毕 比如该惰性的都惰性了
     // 来具体生成 从Route到T::function(...args)的代码
-    fun List<FunctionParameterData>.generateCurrenFunctionCall() : String {
+    fun List<FunctionParameterData>.generateCurrenFunctionCall(): String {
         var functionCallStatement = ownerClass.referenceName + "." + referenceName
         val parseParamArgs = this.mapIndexed { index, param ->
             when (param.parameterType) {
@@ -172,13 +185,22 @@ data class FunctionData(
             }
         }
         val assignBlock = parseParamArgs.joinToString("\n") { it.assignStatement }
-        functionCallStatement = "$functionCallStatement(${parseParamArgs.joinToString(",") { it.referenceName }})"
+        functionCallStatement =
+            "val res = $functionCallStatement(${parseParamArgs.joinToString(",") { it.referenceName }})"
         functionCallStatement = if (modifier.contains(Modifier.SUSPEND)) {
             Template.suspendScope(functionCallStatement, parseParamArgs.VertxRef())
         } else {
             functionCallStatement
         }
-        return "$assignBlock\n$functionCallStatement"
+        return if (manualResponse()) {
+            "$assignBlock\n$functionCallStatement"
+        } else {
+            """
+                $assignBlock
+                $functionCallStatement
+                rc.json(res)
+            """.trimIndent()
+        }
     }
 
 }

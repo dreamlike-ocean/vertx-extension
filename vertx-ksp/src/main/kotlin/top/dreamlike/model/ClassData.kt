@@ -3,9 +3,15 @@ package top.dreamlike.model
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import jakarta.ws.rs.Path
 
-data class ClassData(val rootPath:String, val referenceName:String, val qualifiedName:String) {
+data class ClassData(
+    val rootPath: String,
+    val referenceName: String,
+    val qualifiedName: String,
+    val simpleName: String,
+    val packagePath: String
+) {
     companion object {
-        fun KSClassDeclaration.parse() : ClassData {
+        fun KSClassDeclaration.parse(): ClassData {
             val pathAnnotation = this.annotations.find {
                 it.annotationType.resolve().declaration.qualifiedName?.asString() == Path::class.qualifiedName!!
             }!!
@@ -14,10 +20,9 @@ data class ClassData(val rootPath:String, val referenceName:String, val qualifie
             }!!.value as String
 
             val s = this.simpleName.asString()
-            val referenceName = s.replaceRange(0..0, s[0].lowercase() )
+            val referenceName = s.replaceRange(0..0, s[0].lowercase())
             val qualifiedName = this.qualifiedName!!.asString()
-
-            return ClassData(rootPath, referenceName, qualifiedName)
+            return ClassData(rootPath, referenceName, qualifiedName, s, this.packageName.asString())
         }
     }
 }

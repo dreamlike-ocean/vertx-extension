@@ -5,6 +5,8 @@ import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.Cookie
 import io.vertx.core.http.HttpServerRequest
+import io.vertx.core.json.JsonObject
+import io.vertx.ext.web.RoutingContext
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.CookieParam
 import jakarta.ws.rs.FormParam
@@ -13,6 +15,7 @@ import jakarta.ws.rs.HeaderParam
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
+import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import top.dreamlike.helper.ManualResponse
 
@@ -20,42 +23,21 @@ import top.dreamlike.helper.ManualResponse
 class OwnerController {
     @Path("/test")
     @GET
-    fun test(@CookieParam("cookie1") cookies: String, c: String) {
-
-    }
-
-    @Path("/test1")
-    @GET
-    suspend fun test1(@Context vertx: Vertx, c: String) {
-
-    }
-
-    @Path("/test1")
-    @GET
-    fun test2(@Context vertx: Vertx, @FormParam("param") id: Long) {
-
-    }
-
-    @Path("/test1/:param")
-    @GET
-    fun test3(@Context vertx: Vertx, @PathParam("param") id: Long) {
-
-    }
-
-    @Path("/test1")
-    @GET
-    fun test4(@Context vertx: Vertx, body: Buffer) {
-
+    fun test(@CookieParam("cookie1") cookies: String, c: String) : JsonObject {
+        return JsonObject()
     }
 
     @Path("/test")
     @GET
+    @ManualResponse
     fun test5(@CookieParam("cookie1") cookies: Set<Cookie>, c: String) {
 
     }
 
     @Path("/test")
     @POST
+    @Consumes("application/json", "applcation/xml")
+    @Produces("application/json", "applcation/xml")
     fun test6(
         @CookieParam("cookie1") cookies: Set<Cookie>, c: String,
         @Context vertx: Vertx, @Context serverRequest: HttpServerRequest

@@ -6,6 +6,7 @@ import com.google.devtools.ksp.symbol.*
 import jakarta.ws.rs.Path
 import top.dreamlike.model.ClassData.Companion.parse
 import top.dreamlike.model.FunctionData.Companion.parse
+import java.io.OutputStreamWriter
 
 class VertxJaxRsSymbolProcessor(val environment: SymbolProcessorEnvironment) : SymbolProcessor {
 
@@ -23,6 +24,10 @@ class VertxJaxRsSymbolProcessor(val environment: SymbolProcessorEnvironment) : S
         )
 
         lateinit var logger:KSPLogger
+
+        fun generateProxyClassName(controllerSimple: String) : String {
+            return "${controllerSimple}_proxy_"
+        }
     }
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
@@ -52,33 +57,20 @@ class VertxJaxRsSymbolProcessor(val environment: SymbolProcessorEnvironment) : S
             .mapIndexed { index, it ->
                it.generateRouteHandle(index)
             }
+        //单个Controller生成的挂载Router的代码
         val res = functionStatement.joinToString("\n")
-        logger.warn(res)
+        val proxyClassSource = Template.proxyClass(res, classData)
+        logger.warn(proxyClassSource)
+        environment.codeGenerator
+            .createNewFile(dependencies, classData.packagePath, generateProxyClassName(classData.simpleName))
+            .use {
+                OutputStreamWriter(it).use { writer ->
+                    writer.write(proxyClassSource)
+                }
+            }
     }
 
-    /**
-     * @Path
-     * @GET
-     * @POST
-     * @PUT
-     * @DELETE
-     * @HEAD
-     * @PATCH
-     * @OPTIONS
-     * @Consumes
-     * @Produces
-     * @QueryParam
-     * @PathParam
-     * @HeaderParam
-     * @MatrixParam
-     * @CookieParam
-     * @FormParam
-     */
-    fun generateFunction(resolver: Resolver, function: KSFunctionDeclaration, rootPath: String): String {
-        var simpleName = function.closestClassDeclaration()!!.simpleName
 
-        return ""
-    }
 
 
 }

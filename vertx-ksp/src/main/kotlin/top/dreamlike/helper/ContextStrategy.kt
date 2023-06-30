@@ -9,6 +9,7 @@ import top.dreamlike.Arg
 import top.dreamlike.model.FunctionParameterData
 
 private const val vertxRef = "vertx"
+private const val RCRef = "rc"
 
 private val vertxExtractor = Arg(vertxRef, "val vertx = rc.vertx()")
 
@@ -18,7 +19,7 @@ private val requestExtractor =  Arg("request", "val request = rc.request()")
 
 private val responseExtractor = Arg("response", "val response = rc.response()")
 
-private val routerContextExtractor = Arg("rc", "")
+private val routerContextExtractor = Arg(RCRef, "")
 
 val allContextObject =
     mapOf(
@@ -33,3 +34,5 @@ fun generateContextArg(parameterData: FunctionParameterData) = allContextObject[
 fun List<Arg>.containVertx() = this.any { it.referenceName == vertxRef }
 
 fun List<Arg>.VertxRef() = this.find { it.referenceName == vertxRef }?.referenceName
+
+fun RoutingContextRef() = RCRef
