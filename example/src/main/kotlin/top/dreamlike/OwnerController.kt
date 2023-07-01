@@ -1,12 +1,12 @@
 package top.dreamlike
 
 import io.vertx.core.Vertx
-import io.vertx.core.http.Cookie
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.RoutingContext
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
+import kotlinx.coroutines.delay
 import top.dreamlike.ksp.helper.ManualResponse
 
 @Path("/path")
@@ -21,6 +21,7 @@ class OwnerController {
     @GET
     @ManualResponse
     suspend fun test5(@QueryParam("key") key: String, @Context rc: RoutingContext) {
+        delay(1000)
         rc.response().end(key)
     }
 
