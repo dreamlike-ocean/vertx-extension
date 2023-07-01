@@ -1,7 +1,9 @@
 # Vertx-Extension
 
 [English Version](README-EN.md)
+
 [中文版本](README.md)
+
 This project contains two modules:
 
 * Provide more semantic Vertx-web router binding based on kotlin dsl capability.
