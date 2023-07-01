@@ -39,11 +39,6 @@ fun generateQueryArg(functionParameterData: FunctionParameterData, index: Int): 
             """val $referenceName = rc.queryParam("${functionParameterData.key}")[0].value"""
         )
 
-        Cookie::class.qualifiedName -> Arg(
-            referenceName,
-            """val $referenceName = rc.queryParam("${functionParameterData.key}")[0]"""
-        )
-
         Set::class.qualifiedName, Set::class.java.name -> if (functionParameterData.genericTypes.isNotEmpty() && functionParameterData.genericTypes[0] == String::class.qualifiedName) {
             Arg(referenceName, """val $referenceName = rc.queryParam().toSet()""")
         } else {

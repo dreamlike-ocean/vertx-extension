@@ -1,6 +1,7 @@
 package top.dreamlike.helper;
 
 import io.vertx.core.Context
+import io.vertx.core.MultiMap
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
@@ -19,13 +20,16 @@ private val requestExtractor =  Arg("request", "val request = rc.request()")
 
 private val responseExtractor = Arg("response", "val response = rc.response()")
 
+private val headerExtractor = Arg("httpHeaders" , "val httpHeaders = rc.request().headers()")
+
 private val routerContextExtractor = Arg(RCRef, "")
 
 val allContextObject =
     mapOf(
         Vertx::class.qualifiedName!! to vertxExtractor, Context::class.qualifiedName!! to contextExtractor,
         HttpServerRequest::class.qualifiedName!! to requestExtractor, HttpServerResponse::class.qualifiedName!! to responseExtractor,
-        RoutingContext::class.qualifiedName!! to routerContextExtractor
+        RoutingContext::class.qualifiedName!! to routerContextExtractor,
+        MultiMap::class.qualifiedName to headerExtractor
     )
 
 

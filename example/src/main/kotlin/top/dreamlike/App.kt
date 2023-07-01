@@ -1,19 +1,8 @@
 package top.dreamlike
-import com.fasterxml.jackson.module.kotlin.KotlinFeature
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Vertx
-import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpMethod.*
-import io.vertx.core.json.Json
-import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.ext.web.Router
-import io.vertx.kotlin.coroutines.await
-import io.vertx.kotlin.coroutines.dispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import top.dreamlike.Binder.Companion.bindTo
-import kotlin.coroutines.CoroutineContext
 import top.dreamlike.db.DBScope.Companion.openDBScope
 import top.dreamlike.web.RouterCoroutineScope.Companion.co_route
 
@@ -36,7 +25,9 @@ fun main() {
 //    DatabindCodec.prettyMapper().registerModule(kotlinModule)
     var router = Router.router(vertx)
     var controller = OwnerController()
-    controller bindTo router
+    Binder.create {
+        controller bindTo router
+    }
 
 }
 

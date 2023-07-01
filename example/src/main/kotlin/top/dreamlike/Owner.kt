@@ -1,7 +1,7 @@
 package top.dreamlike
 
 import org.apache.ibatis.annotations.Select
-import top.dreamlike.db.MybatisMarkInterface
+
 
 data class Owner(
     val id: Long?,

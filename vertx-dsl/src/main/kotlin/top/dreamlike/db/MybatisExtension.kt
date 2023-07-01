@@ -5,11 +5,10 @@ package top.dreamlike.db
 import io.vertx.core.Context
 import io.vertx.core.Future
 import io.vertx.core.Promise
-import io.vertx.core.Vertx
 import org.apache.ibatis.session.SqlSessionFactory
 import top.dreamlike.helper.VirtualThreadUnsafe
 import java.util.concurrent.Executor
-
+import io.vertx.core.Vertx
 
 interface MybatisMarkInterface
 

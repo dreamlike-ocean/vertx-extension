@@ -38,7 +38,6 @@ tasks.jar {
 
 dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client:3.1.0")
-    implementation(project(":vertx-dsl"))
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-kotlin
@@ -47,8 +46,10 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
     // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
     implementation("com.zaxxer:HikariCP:5.0.1")
+
     implementation(project(":vertx-ksp"))
     ksp(project(":vertx-ksp"))
+    implementation(project(":vertx-dsl"))
 }
 
 tasks.test {

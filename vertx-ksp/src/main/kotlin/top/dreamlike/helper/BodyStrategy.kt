@@ -12,12 +12,12 @@ private val stringExtractor = Arg("str", "val str = buffer.toString()")
 
 private val jsonExtractor = Arg("jsonObject", "val jsonObject = buffer.toJsonObject()")
 
-private val objectExtractor = { qualifiedName :String -> Arg("object", "val object =  ${Json::class.qualifiedName} .decodeValue(buffer, $qualifiedName::class.java)") }
+private val objectExtractor = { qualifiedName :String -> Arg("bodyRes", "val bodyRes =  ${Json::class.qualifiedName}.decodeValue(buffer, $qualifiedName::class.java)") }
 
 
 fun generateBodyArg(functionParameterData: FunctionParameterData) = when(functionParameterData.typeQualifiedName) {
     Buffer::class.qualifiedName!! -> bufferExtractor
     String::class.qualifiedName!!, String::class.java.name -> stringExtractor
     JsonObject::class.qualifiedName -> jsonExtractor
-    else -> objectExtractor(functionParameterData.ksValueParameter.name!!.asString())
+    else -> objectExtractor(functionParameterData.typeQualifiedName)
 }
