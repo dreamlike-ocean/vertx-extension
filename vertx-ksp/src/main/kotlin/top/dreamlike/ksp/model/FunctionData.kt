@@ -1,4 +1,4 @@
-package top.dreamlike.model
+package top.dreamlike.ksp.model
 
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.Modifier
@@ -11,10 +11,10 @@ import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
-import top.dreamlike.Template
-import top.dreamlike.VertxJaxRsSymbolProcessor
-import top.dreamlike.helper.*
-import top.dreamlike.model.FunctionParameterData.Companion.parseFunctionParameter
+import top.dreamlike.ksp.Template
+import top.dreamlike.ksp.VertxJaxRsSymbolProcessor
+import top.dreamlike.ksp.helper.*
+import top.dreamlike.ksp.model.FunctionParameterData.Companion.parseFunctionParameter
 
 data class FunctionData(
     val path: String?,

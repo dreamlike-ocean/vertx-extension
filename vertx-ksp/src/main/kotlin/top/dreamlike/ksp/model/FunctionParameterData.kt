@@ -1,8 +1,7 @@
-package top.dreamlike.model
+package top.dreamlike.ksp.model
 
 
 import com.google.devtools.ksp.symbol.KSValueParameter
-import io.vertx.core.Vertx
 import jakarta.ws.rs.CookieParam
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.HeaderParam
@@ -10,9 +9,7 @@ import jakarta.ws.rs.MatrixParam
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
-import jakarta.ws.rs.core.GenericType
-import top.dreamlike.VertxJaxRsSymbolProcessor
-import top.dreamlike.helper.fetchValueString
+import top.dreamlike.ksp.helper.fetchValueString
 
 
 data class FunctionParameterData(

@@ -1,4 +1,4 @@
-package top.dreamlike.model
+package top.dreamlike.ksp.model
 
 /**
  * @QueryParam

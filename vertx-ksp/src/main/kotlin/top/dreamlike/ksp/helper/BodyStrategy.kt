@@ -1,10 +1,10 @@
-package top.dreamlike.helper
+package top.dreamlike.ksp.helper
 
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
-import top.dreamlike.Arg
-import top.dreamlike.model.FunctionParameterData
+import top.dreamlike.ksp.Arg
+import top.dreamlike.ksp.model.FunctionParameterData
 
 private val bufferExtractor = Arg("buffer", "")
 

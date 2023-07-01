@@ -1,4 +1,4 @@
-package top.dreamlike.helper
+package top.dreamlike.ksp.helper
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)

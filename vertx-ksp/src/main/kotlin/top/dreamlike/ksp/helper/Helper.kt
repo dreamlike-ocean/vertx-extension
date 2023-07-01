@@ -1,4 +1,4 @@
-package top.dreamlike.helper
+package top.dreamlike.ksp.helper
 
 import com.google.devtools.ksp.symbol.KSAnnotation
 

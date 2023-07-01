@@ -1,8 +1,8 @@
-package top.dreamlike.helper
+package top.dreamlike.ksp.helper
 
-import top.dreamlike.Arg
-import top.dreamlike.VertxJaxRsSymbolProcessor
-import top.dreamlike.model.FunctionParameterData
+import top.dreamlike.ksp.Arg
+import top.dreamlike.ksp.VertxJaxRsSymbolProcessor
+import top.dreamlike.ksp.model.FunctionParameterData
 import java.math.BigDecimal
 
 fun generatePathParamArg(functionParameterData: FunctionParameterData, index: Int): Arg {

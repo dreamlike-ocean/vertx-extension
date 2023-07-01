@@ -1,4 +1,4 @@
-package top.dreamlike.helper;
+package top.dreamlike.ksp.helper;
 
 import io.vertx.core.Context
 import io.vertx.core.MultiMap
@@ -6,8 +6,8 @@ import io.vertx.core.Vertx
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.ext.web.RoutingContext
-import top.dreamlike.Arg
-import top.dreamlike.model.FunctionParameterData
+import top.dreamlike.ksp.Arg
+import top.dreamlike.ksp.model.FunctionParameterData
 
 private const val vertxRef = "vertx"
 private const val RCRef = "rc"

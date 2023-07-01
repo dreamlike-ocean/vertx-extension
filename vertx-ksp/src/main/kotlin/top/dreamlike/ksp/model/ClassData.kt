@@ -1,4 +1,4 @@
-package top.dreamlike.model
+package top.dreamlike.ksp.model
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import jakarta.ws.rs.Path

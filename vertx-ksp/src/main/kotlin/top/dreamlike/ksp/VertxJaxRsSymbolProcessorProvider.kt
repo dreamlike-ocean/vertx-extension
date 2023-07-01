@@ -1,4 +1,4 @@
-package top.dreamlike
+package top.dreamlike.ksp
 
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider

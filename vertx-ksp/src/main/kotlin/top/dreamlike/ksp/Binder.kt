@@ -1,4 +1,4 @@
-package top.dreamlike
+package top.dreamlike.ksp
 
 import io.vertx.ext.web.Router
 

@@ -1,11 +1,10 @@
-package top.dreamlike
+package top.dreamlike.ksp
 
-import com.google.devtools.ksp.closestClassDeclaration
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.*
 import jakarta.ws.rs.Path
-import top.dreamlike.model.ClassData.Companion.parse
-import top.dreamlike.model.FunctionData.Companion.parse
+import top.dreamlike.ksp.model.ClassData.Companion.parse
+import top.dreamlike.ksp.model.FunctionData.Companion.parse
 import java.io.OutputStreamWriter
 
 class VertxJaxRsSymbolProcessor(val environment: SymbolProcessorEnvironment) : SymbolProcessor {

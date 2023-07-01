@@ -1,7 +1,7 @@
-package top.dreamlike
+package top.dreamlike.ksp
 
-import top.dreamlike.VertxJaxRsSymbolProcessor.Companion.generateProxyClassName
-import top.dreamlike.model.ClassData
+import top.dreamlike.ksp.VertxJaxRsSymbolProcessor.Companion.generateProxyClassName
+import top.dreamlike.ksp.model.ClassData
 
 
 class Template {
@@ -33,7 +33,11 @@ class Template {
             return """
               CoroutineScope(${vertxRef ?: "rc.vertx()"}.dispatcher() as CoroutineContext)
                     .launch {
-                       $handle
+                       try {
+                        $handle
+                       }catch(t :Throwable) {
+                         rc.fail(t)
+                       }
                      }
         """.trimIndent()
         }

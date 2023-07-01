@@ -1,9 +1,8 @@
-package top.dreamlike.helper
+package top.dreamlike.ksp.helper
 
-import io.vertx.core.http.Cookie
-import top.dreamlike.Arg
-import top.dreamlike.VertxJaxRsSymbolProcessor
-import top.dreamlike.model.FunctionParameterData
+import top.dreamlike.ksp.Arg
+import top.dreamlike.ksp.VertxJaxRsSymbolProcessor
+import top.dreamlike.ksp.model.FunctionParameterData
 import java.math.BigDecimal
 
 fun generateQueryArg(functionParameterData: FunctionParameterData, index: Int): Arg {
@@ -11,32 +10,32 @@ fun generateQueryArg(functionParameterData: FunctionParameterData, index: Int): 
     return when (functionParameterData.typeQualifiedName) {
         Int::class.qualifiedName, Int::class.java.name -> Arg(
             referenceName,
-            """val $referenceName = rc.queryParam("${functionParameterData.key}")[0].value.toInt()"""
+            """val $referenceName = rc.queryParam("${functionParameterData.key}")[0].toInt()"""
         )
 
         Long::class.qualifiedName, Long::class.java.name -> Arg(
             referenceName,
-            """val $referenceName = rc.queryParam("${functionParameterData.key}")[0].value.toLong()"""
+            """val $referenceName = rc.queryParam("${functionParameterData.key}")[0].toLong()"""
         )
 
         Double::class.qualifiedName, Double::class.java.name -> Arg(
             referenceName,
-            """val $referenceName = rc.queryParam("${functionParameterData.key}")[0].value.toDouble()"""
+            """val $referenceName = rc.queryParam("${functionParameterData.key}")[0].toDouble()"""
         )
 
         Float::class.qualifiedName, Float::class.java.name -> Arg(
             referenceName,
-            """val $referenceName = rc.queryParam("${functionParameterData.key}")[0].value.toFloat()"""
+            """val $referenceName = rc.queryParam("${functionParameterData.key}")[0].toFloat()"""
         )
 
         BigDecimal::class.qualifiedName -> Arg(
             referenceName,
-            """val $referenceName =  ${BigDecimal::class.qualifiedName}(rc.queryParam("${functionParameterData.key}")[0].value)"""
+            """val $referenceName =  ${BigDecimal::class.qualifiedName}(rc.queryParam("${functionParameterData.key}")[0])"""
         )
 
         String::class.java.name, String::class.qualifiedName -> Arg(
             referenceName,
-            """val $referenceName = rc.queryParam("${functionParameterData.key}")[0].value"""
+            """val $referenceName = rc.queryParam("${functionParameterData.key}")[0]"""
         )
 
         Set::class.qualifiedName, Set::class.java.name -> if (functionParameterData.genericTypes.isNotEmpty() && functionParameterData.genericTypes[0] == String::class.qualifiedName) {
